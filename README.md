@@ -33,8 +33,9 @@
 |---|---|
 | Starter-kit baseline (auth, dashboard, settings UI) | Implemented (unverified against NewsCMS acceptance) |
 | NewsCMS domain (articles, media, themes, search, SEO, analytics, …) | Planned — see [Roadmap](#roadmap-and-phase-status) |
-| Source-of-truth decisions (media, permissions, audit, settings stores) | Awaiting decision (Playbook P0-T04) |
-| Editor, languages, hosting, Polls scope | Awaiting decision (PRD §22, Q1–Q8) |
+| Source-of-truth decisions (media, permissions, audit, settings stores) | Decided — ADR-0001…0004 in `docs/adr/` |
+| Editor, languages, Contributor scope | Confirmed (TipTap; hi+en, no RTL; Reporter-minus-category/tag) — PRD §22 |
+| Hosting, design targets, video, Polls scope | Awaiting decision (PRD §22, Q4–Q8) |
 
 ## Principles
 
@@ -53,11 +54,11 @@ Verified against `composer.json`, `package.json`, and the installed baseline:
 | Framework | Laravel 13 |
 | Admin UI | Livewire 4, Blade, Flux UI 2, Tailwind CSS 4, Alpine.js where useful |
 | Auth | Laravel Fortify (TOTP 2FA, password reset, throttling) |
-| Database | MySQL 8+ for production-like use; SQLite by default locally and in tests |
+| Database | MariaDB 10.11+ locally (dedicated `newscms_test` database for tests); MySQL 8+ authoritative in CI and production-like use |
 | Cache / queues / stats | Redis/Valkey per TRD; `database` drivers by default locally |
 | Search | MySQL fulltext first; Scout + Meilisearch behind an interface if spikes justify it |
 | Images | Intervention Image path with Imagick (planned); WebP required, AVIF conditional |
-| Editor | TipTap block editor (**unconfirmed**, PRD Q1) |
+| Editor | TipTap block editor (confirmed, PRD D14) |
 | Tests / quality | Pest 5, Larastan (level 7 configured), Pint (Laravel preset) |
 | Assets | Vite via `vite-plus` (`npm run dev` / `npm run build`) |
 
@@ -127,13 +128,13 @@ php artisan pail              # tail application logs
 php artisan about             # environment summary
 ```
 
-The default `.env.example` uses SQLite (`DB_CONNECTION=sqlite`) and `database` cache/queue/session drivers, so no external services are needed for a first boot. MySQL/Redis enter the picture for production-like environments and the full CI matrix (TRD §23).
+Local development uses MariaDB/MySQL (`DB_*` settings in `.env`) with `database` cache/queue/session drivers. Tests use a dedicated `newscms_test` database and refuse to run against any other database (see `tests/TestCase.php`). MySQL 8 + Redis service containers are authoritative in CI (TRD §23).
 
 </details>
 
 ## Environment configuration
 
-Copy `.env.example` to `.env` and adjust at minimum `APP_URL` and, when leaving SQLite, the `DB_*` / `REDIS_*` settings. NewsCMS product settings (languages, media disk, cache/purge, analytics, breaking-news defaults) are defined in [PRD §21.2](docs/PRD.md); admin-editable settings arrive with Playbook P1-T03 — until then, environment and config files are the source of truth. Never commit real credentials; see [Security notes](#security-and-configuration-notes).
+Copy `.env.example` to `.env` and adjust at minimum `APP_URL` and the `DB_*` / `REDIS_*` settings to point at the local MariaDB/MySQL server. NewsCMS product settings (languages, media disk, cache/purge, analytics, breaking-news defaults) are defined in [PRD §21.2](docs/PRD.md); admin-editable settings arrive with Playbook P1-T03 — until then, environment and config files are the source of truth. Never commit real credentials; see [Security notes](#security-and-configuration-notes).
 
 ## Database and frontend assets
 
@@ -156,7 +157,7 @@ composer types:check                            # phpstan analyse (level 7)
 composer lint:check                             # pint --test
 ```
 
-Tests run on SQLite `:memory:` by default (`phpunit.xml`); the authoritative integration matrix targets MySQL + Redis service containers (TRD §23). No full-suite success is claimed here — run `composer test` and report actual results.
+Tests run against the dedicated `newscms_test` database on the local MariaDB/MySQL server (`phpunit.xml`; overridable via `DB_*` env vars); the suite refuses to run if the target is not a `*test*` database. CI is authoritative on MySQL 8 + Redis service containers (TRD §23). Last verified: `composer test` green end-to-end (Pint, PHPStan level 7, 31 tests) — see `docs/phases/P0-EXECUTION-REPORT.md`.
 
 <details>
 <summary>Quality conventions</summary>
@@ -178,7 +179,7 @@ Tests run on SQLite `:memory:` by default (`phpunit.xml`); the authoritative int
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Structure, ownership, dependency rules (Draft v1.0) |
 | [docs/MASTER_PLAYBOOK.md](docs/MASTER_PLAYBOOK.md) | Authoritative P0–P5 roadmap, tasks, gates (v1.0) |
 
-Architecture Decision Records will live in `docs/adr/` once the first material decision lands (directory does not exist yet).
+Architecture Decision Records live in `docs/adr/` (ADR-0001…0004: media, permissions, audit, settings stores).
 
 ## Roadmap and phase status
 
@@ -186,14 +187,14 @@ From [`docs/MASTER_PLAYBOOK.md`](docs/MASTER_PLAYBOOK.md) §4 (estimates omitted
 
 | Phase | Title | Status |
 |---|---|---|
-| P0 | Baseline and decisions (toolchain, CI, source-of-truth ADRs, spikes) | Planned |
+| P0 | Baseline and decisions (toolchain, CI, source-of-truth ADRs, spikes) | Executed — P0 OPEN, 8/10 criteria PASS ([report](docs/phases/P0-EXECUTION-REPORT.md)) |
 | P1 | Foundation and admin shell (roles, auth, settings, audit, components) | Planned |
 | P2 | Editorial core (articles, taxonomy, media, editor, search spike) | Planned |
 | P3 | Public site and themes (URLs, theme system, SEO/feeds, caching) | Planned |
 | P4 | Newsroom features and growth (breaking, embeds, scripts/ads, analytics, modules) | Planned |
 | P5 | Operations and pilot (releases, backups, observability, load validation) | Planned |
 
-Blocked first: P0-T04 (media/permissions/audit/settings stores) gates all migrations; Q1–Q8 (editor, languages, Contributor scope, hosting, Polls) gate their dependent phases.
+P0 unblocked P1/P2: source-of-truth ADRs merged; Q1–Q3 confirmed. Still gating later phases: Q4–Q6 (hosting, servers, design targets → P5), Q7 (video → P2), Q8 (Polls → P4). Open findings: npm critical advisories, Imagick provisioning, first CI run.
 
 ## Development workflow
 
