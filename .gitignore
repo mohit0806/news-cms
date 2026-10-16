@@ -2,6 +2,14 @@
 /vendor
 /node_modules
 
+# Internal Markdown documentation (kept on disk, excluded from Git).
+# README.md stays public and trackable. NOTE: .gitignore does not untrack
+# files already committed; see the publication report for the explicit
+# `git rm --cached` remediation. Add `!NAME.md` exceptions here if a future
+# public doc (e.g. CONTRIBUTING.md) must stay tracked.
+*.md
+!README.md
+
 # Environment files and secrets (.env.example stays tracked)
 .env
 .env.backup
@@ -11,6 +19,25 @@
 
 # Composer OAuth tokens (secrets)
 /auth.json
+
+# Private keys and certificates (never commit)
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+
+# Database dumps and backups (never commit)
+*.sql
+*.sql.gz
+*.dump
+*.bak
+*~
+
+# Local environment overrides (the named files above are covered;
+# this catches variants like .env.staging.local)
+/.env.*.local
+!.env.example
 
 # Frontend build output (Vite / laravel-vite-plugin conventions)
 /public/build
