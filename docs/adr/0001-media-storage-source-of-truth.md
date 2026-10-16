@@ -33,3 +33,15 @@ and Media Library provides no hierarchical folders.
 - P2-T05 implements folders/link/usage against the installed package (install needs dependency-review
   approval). Folder behavior in PRD §7.1 is fully preserved.
 - If the package is ever replaced, only the record/conversion layer migrates; folders/usage survive.
+
+## Addendum 2026-10-16 (P2-T05.1, owner-approved install)
+
+- Installed `spatie/laravel-medialibrary:11.23.9` + `intervention/image:3.11.10` (MIT; dry-run showed
+  6 installs / 0 updates / 0 removals; `composer audit` clean).
+- Table-layout check (TRD §10 naming): v11 keeps a **single `media` table** (`id` bigint unsigned,
+  `model` morph, `collection_name`, `manipulations`/`generated_conversions`/`responsive_images` JSON).
+  There is **no separate `media_conversions` table**; TRD §10 references to conversion rows map to the
+  `generated_conversions` JSON column. No schema decision changes: the package still owns
+  records + conversions, NewsCMS still owns folders/link/usage.
+- `media_usages.media_id` (`unsignedBigInteger`, no FK) matches the package PK type.
+- Conversion queue routing stays at package defaults until T05.3 wires `MEDIA_QUEUE`.

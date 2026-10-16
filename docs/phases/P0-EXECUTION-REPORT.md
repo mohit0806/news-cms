@@ -1,7 +1,7 @@
 # P0 Execution Report
 
 **Phase:** P0 — Baseline and Decisions. **Plan:** `docs/phases/P0.md`. **Date:** 2026-10-09.
-**Overall status:** P0 OPEN — 8/10 exit criteria PASS, 2 NOT PASS on external blockers (all 7 tasks meet acceptance). Do not advance to P1 until blockers clear or the owner waives them with recorded rationale.
+**Overall status:** ACCEPTED WITH EXCEPTIONS — P0 COMPLETE (owner-approved E-P0-01/E-P0-02; see plan §8). 8 criteria PASS, 2 DEFERRED (neither passed).
 Local history: P0-baseline commit + closure-remediation commit on `main` (see `git log`); tree clean. No remote configured — push + CI await the remote URL.
 
 ## Preflight (recorded before any change)
@@ -107,22 +107,26 @@ npm: resolved via `tinypool@2.1.2` override (audit clean, build green) — no `-
 
 | Criterion | Result |
 |---|---|
-| Fresh clone → admin login via docs | PARTIAL — `migrate:fresh --seed` clean + login suite green on MariaDB + `npm run build` OK; true fresh-clone/Actions run not possible here |
+| Fresh clone → admin login via docs | DEFERRED (E-P0-01) — partial evidence only (`migrate:fresh --seed` clean, login suite green, `npm run build` OK); clean-checkout demo due in P1. Not passed. |
 | `composer test` green on clean checkout | DONE locally — full end-to-end green on MariaDB (31/30/1/1); CI run pending |
 | T04 merged | DONE — 4 ADRs + PRD/TRD/ARCH alignment |
 | Q1–Q3 owners | DONE — confirmed with dates |
 | No custom framework | DONE — docs/tests/CI/config-env only |
-| Toolchain compatibility | PARTIAL — baseline recorded, no drift; imagick provisioning pending owner action (apt package + CI mechanism confirmed) |
-| CI (MySQL 8 + Redis, audits, arch) | CONFIGURED — workflow complete incl. imagick; audits green locally; Actions run pending (no git remote here) |
+| Toolchain compatibility | DONE locally — baseline recorded, no drift; imagick 3.8.1 loaded + functional (CI-side load pending first run) |
+| CI (MySQL 8 + Redis, audits, arch) | DEFERRED (E-P0-02) — workflow implemented and complete; hosted execution deferred until remote/auth available. Not passed. |
 | Arch tests in ordinary suite | DONE — 2/2 pass |
 | Secrets handling | OK — `.env` untouched/present, never committed; `composer audit` + `npm audit` clean |
 | Fixtures | DONE — seeder exit 0, corpora load |
 | No P1 leakage | DONE — no domain code, no packages installed, no migrations beyond baseline 2FA-column correction |
 
-**Phase status: P0 OPEN (not complete).** PASS (8): composer-test-local, T04, Q-owners, no-framework,
-toolchain-local (imagick 3.8.1 loaded + functional), arch, secrets/audits, fixtures. NOT PASS (2):
-fresh-clone login (partial evidence), CI run (workflow ready; push + execution need the remote URL).
-No criterion is marked complete without evidence above.
+**Phase status: ACCEPTED WITH EXCEPTIONS — P0 COMPLETE.** PASS (8): composer-test-local (31 tests:
+30 passed, 1 skipped for disabled 2FA, 1 pre-existing risky placeholder — all disclosed), T04, Q-owners,
+no-framework, toolchain-local (imagick 3.8.1 loaded + functional), arch, secrets/audits, fixtures.
+DEFERRED (2): E-P0-01 (clean-checkout login demo due in P1 before auth is production-ready) and E-P0-02
+(first hosted run due once remote/auth exists; failures resolved before production readiness).
+Acceptance rationale: owner explicitly accepts these two risks for the P0→P1 transition; exceptions are
+P0-only and waive nothing in P1–P5. Test counts above are the latest verified run; the guard-incident history,
+toolchain/ADR/fixture evidence, and pre-existing-issue disclosures elsewhere in this report stand unchanged.
 `.env` mode 644 noted (TRD §19 640 applies at deploy; left unchanged).
 Pre-existing issues preserved as found: empty `SecurityTest` placeholder (risky), Fortify `registration()`
 vs no-reader-accounts (P1-T02), password min-10-vs-12 (P1-T02).

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureTwoFactorAuthentication;
+use App\Http\Middleware\EnsureUserActive;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'ensure-2fa' => EnsureTwoFactorAuthentication::class,
+            'ensure-active' => EnsureUserActive::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

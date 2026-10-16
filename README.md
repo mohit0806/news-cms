@@ -187,7 +187,7 @@ From [`docs/MASTER_PLAYBOOK.md`](docs/MASTER_PLAYBOOK.md) §4 (estimates omitted
 
 | Phase | Title | Status |
 |---|---|---|
-| P0 | Baseline and decisions (toolchain, CI, source-of-truth ADRs, spikes) | Executed — P0 OPEN, 8/10 criteria PASS ([report](docs/phases/P0-EXECUTION-REPORT.md)) |
+| P0 | Baseline and decisions (toolchain, CI, source-of-truth ADRs, spikes) | Accepted with exceptions E-P0-01/E-P0-02 ([report](docs/phases/P0-EXECUTION-REPORT.md)) |
 | P1 | Foundation and admin shell (roles, auth, settings, audit, components) | Planned |
 | P2 | Editorial core (articles, taxonomy, media, editor, search spike) | Planned |
 | P3 | Public site and themes (URLs, theme system, SEO/feeds, caching) | Planned |

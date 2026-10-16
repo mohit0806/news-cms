@@ -1,5 +1,7 @@
 <?php
 
+use App\Support\SiteTime;
+
 return [
 
     /*
@@ -66,6 +68,20 @@ return [
     */
 
     'timezone' => env('APP_TIMEZONE', 'UTC'),
+
+    'site_timezone' => env('SITE_TIMEZONE', 'Asia/Kolkata'),
+
+    'site_languages' => SiteTime::parseLanguages((string) env('SITE_LANGUAGES', 'en')),
+
+    'admin_path' => env('ADMIN_PATH', 'admin'),
+
+    'unicode_slugs' => env('UNICODE_SLUGS', false),
+
+    'corpus_full' => env('CORPUS_FULL', false),
+
+    'breaking_default_hours' => env('BREAKING_DEFAULT_HOURS', 6),
+
+    'force_admin_2fa' => env('FORCE_ADMIN_2FA', false),
 
     /*
     |--------------------------------------------------------------------------

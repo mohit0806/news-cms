@@ -70,7 +70,7 @@ Task IDs are stable (`P<phase>-T<nn>`). Status values: Planned · In progress ·
 
 **Objective:** Secure admin with roles, settings, audit, concurrency primitives, component foundation, locale/time plumbing, notifications.
 **Covers:** PRD §4, §6.1.4 (primitives), §15 (exc. homepage blocks admin in P2), §16; TRD §6.4–§6.5, §7, §11 (part), A1/A2/A5.
-**Entry:** P0 gate passed.
+**Entry:** P0 gate passed (P0 accepted with exceptions E-P0-01/E-P0-02 — see `docs/phases/P0.md` §8; P1-T02 still validates auth before production readiness, and the first hosted CI run remains due).
 
 | ID | Task | Requirements | Acceptance |
 |---|---|---|---|
@@ -227,6 +227,7 @@ Unmapped: none material; Polls maps only if Q8 confirms (else Deferred).
 - R5 Purge storms/limits → coalescing + TTL fallback.
 - R6 Tracker/CWV damage → S8 thresholds + lazy slots.
 - R7 Optimistic estimates → re-estimate after P0 (PRD §25).
+- E-P0-01/E-P0-02 P0 accepted with exceptions (owner-approved, P0-only; details in `docs/phases/P0.md` §8): fresh-clone login demo deferred to P1 auth work; first hosted CI run deferred until remote/auth exists. Neither is passed; nothing waived for P1–P5.
 
 ---
 

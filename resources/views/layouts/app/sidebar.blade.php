@@ -12,9 +12,11 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
+                    @foreach (\App\Support\AdminNav::visibleItems() as $navItem)
+                        <flux:sidebar.item :icon="$navItem['icon']" :href="route($navItem['route'])" :current="request()->routeIs($navItem['route'])" wire:navigate>
+                            {{ __($navItem['label']) }}
+                        </flux:sidebar.item>
+                    @endforeach
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

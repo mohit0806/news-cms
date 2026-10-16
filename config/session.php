@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
 
     /*
@@ -32,7 +30,8 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // Admin idle timeout (PRD §15.5, default 120 minutes); SESSION_LIFETIME kept as fallback.
+    'lifetime' => (int) env('ADMIN_IDLE_TIMEOUT_MIN', env('SESSION_LIFETIME', 120)),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 
@@ -127,10 +126,7 @@ return [
     |
     */
 
-    'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug((string) env('APP_NAME', 'laravel')).'-session',
-    ),
+    'cookie' => env('SESSION_COOKIE', 'cms_session'),
 
     /*
     |--------------------------------------------------------------------------
@@ -143,7 +139,9 @@ return [
     |
     */
 
-    'path' => env('SESSION_PATH', '/'),
+    // Scoped to the admin prefix (P0-T06 S3 verdict). A custom ADMIN_PATH
+    // requires a matching SESSION_PATH; see .env.example.
+    'path' => env('SESSION_PATH', '/'.trim((string) env('ADMIN_PATH', 'admin'), '/')),
 
     /*
     |--------------------------------------------------------------------------
